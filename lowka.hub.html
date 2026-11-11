@@ -1,0 +1,255 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Мой магазин</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style id="css">
+/* Каталог-витрина: сетка карточек 3:4, акцент задаётся владельцем в настройках */
+:root{--bg:#ffffff;--fg:#1a1a1a;--card:#f4f4f5;--mut:#6f6f76;--bd:#e2e2e4;--acc:#111111;--acc-fg:#ffffff;--ok:#1d8a4b;--err:#d33a3a}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151517;--fg:#f1f1f1;--card:#222226;--mut:#9a9aa0;--bd:#34343a;--ok:#4cc27f;--err:#ff6b6b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151517;--fg:#f1f1f1;--card:#222226;--mut:#9a9aa0;--bd:#34343a;--ok:#4cc27f;--err:#ff6b6b;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;padding:12px 0;background:var(--bg);border-bottom:1px solid var(--bd)}
+header h1{flex:1;min-width:0;margin:0;font-size:20px;overflow-wrap:anywhere}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;padding:8px 14px;display:inline-block;text-align:center;text-decoration:none}
+button:focus-visible,.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.c:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+button.p,.btn.p{background:var(--acc);color:var(--acc-fg);border-color:var(--acc);box-shadow:inset 0 0 0 1px rgba(128,128,128,.35)}
+button.d{color:var(--err)}button:disabled{opacity:.5;cursor:default}
+button.lnk{border:0;background:none;color:var(--mut);padding:6px 0;font-size:13px;text-decoration:underline}
+main{max-width:960px;margin:0 auto;padding-block:16px}
+footer{max-width:960px;margin:0 auto;padding-block:20px 28px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.c{background:var(--card);border-radius:14px;overflow:hidden;cursor:pointer;position:relative;min-width:0}
+.c .im,.big{aspect-ratio:3/4;max-width:100%;background:linear-gradient(135deg,var(--bd),var(--card));display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px}
+.im img,.big img{width:100%;height:100%;object-fit:cover}
+.c .t{padding:10px}.c b{display:block;overflow-wrap:anywhere}.pr{font-weight:700;font-variant-numeric:tabular-nums}
+.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.66);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.md{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+@media(min-width:700px){.ov{align-items:center}.md{border-radius:18px}}
+.sz{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.sz button.on{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}
+.th{display:flex;gap:6px;margin:8px 0;overflow-x:auto}.th img{width:54px;height:54px;object-fit:cover;border-radius:8px;cursor:pointer;flex:none}
+input,textarea,select{font:inherit;width:100%;padding:9px 11px;margin:4px 0 10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg)}
+input[type=file]{padding:7px}
+label{font-size:13px;color:var(--mut)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+.box{background:var(--card);border-radius:12px;padding:12px;margin:10px 0}
+.tabs{display:flex;gap:8px;margin-bottom:14px}.tabs button.on{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}
+.x{display:inline-block;position:relative}.x button{position:absolute;top:2px;right:2px;padding:0 6px;border-radius:50%}
+.bar{border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.bar.dirty{border-color:#d9961a}.bar.err{border-color:var(--err)}
+.bar .st{font-weight:600}.bar.ok .st{color:var(--ok)}.bar.err .st{color:var(--err)}
+.note{background:var(--card);border:1px solid #d9961a;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.card{font-size:20px;letter-spacing:1px;font-weight:700;margin:6px 0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.em{color:var(--err);min-height:1.2em;margin:0 0 8px}
+h2.s{font-size:16px;margin:22px 0 4px}
+small{color:var(--mut)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:20px;z-index:40;font-size:14px;max-width:90vw}
+</style>
+<div id="view"></div>
+<div id="modal"></div>
+<div id="toast" hidden></div>
+<script id="state" type="application/json">{"s":{"name":"Мой магазин","color":"#111111","tg":"","card":"","holder":"","cur":"₴","about":"Одежда с доставкой по Украине","pw":"3b0e51097ee65ac6f20fe3fa45687fb62f36948cfc0cea6a189baeaf1748bab9"},"p":[{"id":"demo","n":"Худи оверсайз","pr":900,"d":"Плотный флис, свободный крой. Это пример товара: удалите или измените его в админке.","sz":["S","M","L","XL"],"im":[],"sold":false}]}</script>
+<script id="main">
+/* Каркас страницы, в который сохраняется весь магазин при публикации */
+const PREFIX=`<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>`;
+const SALT='shop1:';
+/*SHA*/
+const SH={k:[],h:[]};(function(){let p=2;while(SH.k.length<64){let ok=true;for(let d=2;d*d<=p;d++)if(p%d===0){ok=false;break}if(ok){if(SH.h.length<8)SH.h.push((Math.pow(p,.5)%1)*4294967296|0);SH.k.push((Math.pow(p,1/3)%1)*4294967296|0)}p++}})();
+function sha256(s){
+ s=unescape(encodeURIComponent(s));
+ const rr=(v,a)=>(v>>>a)|(v<<(32-a)),mw=4294967296,len=s.length*8,w=[];
+ s+='\x80';while(s.length%64!==56)s+='\x00';
+ for(let i=0;i<s.length;i++)w[i>>2]|=s.charCodeAt(i)<<((3-i%4)*8);
+ w.push((len/mw)|0,len|0);
+ let h=SH.h.slice();
+ for(let j=0;j<w.length;){
+  const x=w.slice(j,j+=16),o=h.slice(0,8);
+  h=h.slice(0,8);
+  for(let i=0;i<64;i++){
+   const w15=x[i-15],w2=x[i-2],a=h[0],e=h[4];
+   const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+SH.k[i]+(x[i]=i<16?x[i]:(x[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+x[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);
+   const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));
+   h=[(t1+t2)|0].concat(h);h[4]=(h[4]+t1)|0;
+  }
+  for(let i=0;i<8;i++)h[i]=(h[i]+o[i])|0;
+ }
+ let r='';for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=(h[i]>>(j*8))&255;r+=(b<16?'0':'')+b.toString(16)}
+ return r}
+/*ENDSHA*/
+const DEFAULT_PW_HASH='3b0e51097ee65ac6f20fe3fa45687fb62f36948cfc0cea6a189baeaf1748bab9';
+const $=s=>document.querySelector(s);
+const store=(kind)=>({get(k){try{return window[kind].getItem(k)}catch(e){return null}},set(k,v){try{window[kind].setItem(k,v)}catch(e){}},del(k){try{window[kind].removeItem(k)}catch(e){}}});
+const L=store('localStorage'),SS=store('sessionStorage');
+let S=JSON.parse($('#state').textContent);
+S.s=Object.assign({name:'Мой магазин',color:'#111111',tg:'',card:'',holder:'',cur:'₴',about:'',pw:DEFAULT_PW_HASH},S.s||{});
+if(!S.s.pw)S.s.pw=DEFAULT_PW_HASH;
+S.p=(S.p||[]).map(p=>Object.assign({id:'p'+Math.random().toString(36).slice(2),n:'',pr:0,d:'',sz:[],im:[],sold:false},p));
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(+n||0).toLocaleString('ru-RU')+' '+esc(S.s.cur);
+const prod=id=>S.p.find(p=>p.id===id);
+let isAdmin=L.get('shopAdmin')===S.s.pw;
+let ui={mode:'shop',tab:'p',modal:null,confirm:null,save:'saved',msg:'',canWrite:null};
+try{const u=JSON.parse(SS.get('shopUI')||'null');if(u&&isAdmin){ui.mode=u.mode==='admin'?'admin':'shop';ui.tab=['p','s'].includes(u.tab)?u.tab:'p'}}catch(e){}
+const persistUI=()=>SS.set('shopUI',JSON.stringify({mode:ui.mode,tab:ui.tab}));
+let cart=[];
+try{cart=JSON.parse(L.get('shopCart')||'[]')}catch(e){}
+cart=(Array.isArray(cart)?cart:[]).map(i=>{const p=prod(i.id);return p&&!p.sold?{id:p.id,n:p.n,pr:p.pr,size:i.size||null,q:Math.max(1,+i.q||1)}:null}).filter(Boolean);
+const saveCart=()=>L.set('shopCart',JSON.stringify(cart));
+const total=()=>cart.reduce((a,i)=>a+i.pr*i.q,0);
+const count=()=>cart.reduce((a,i)=>a+i.q,0);
+
+/* ---------- тема и вспомогательное ---------- */
+function readable(hex){const m=/^#?([0-9a-f]{6})$/i.exec(hex||'');if(!m)return '#ffffff';const n=parseInt(m[1],16),r=n>>16,g=(n>>8)&255,b=n&255;return (0.299*r+0.587*g+0.114*b)>150?'#111111':'#ffffff'}
+function theme(){const r=document.documentElement.style;r.setProperty('--acc',S.s.color);r.setProperty('--acc-fg',readable(S.s.color));document.title=S.s.name}
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{e.hidden=true},2200)}
+function copy(text,srcEl){
+ const fallback=()=>{if(srcEl){const r=document.createRange();r.selectNodeContents(srcEl);const s=getSelection();s.removeAllRanges();s.addRange(r)}toast('Не удалось скопировать, текст выделен')};
+ try{navigator.clipboard.writeText(text).then(()=>toast('Скопировано'),fallback)}catch(e){fallback()}
+}
+
+/* ---------- витрина ---------- */
+function header(){return `<header><h1>${esc(S.s.name)}</h1>${isAdmin?`<button data-act="mode">${ui.mode==='admin'?'Магазин':'⚙ Админ'}</button>`:''}<button data-act="cart" aria-label="Корзина">🛒${count()?' '+count():''}</button></header>`}
+function footer(){return `<footer>${isAdmin?`<button class="lnk" data-act="logout">Выйти из админки</button>`:`<button class="lnk" data-act="login">Вход для владельца</button>`}</footer>`}
+function shopV(){
+ const list=S.p.map(p=>`<div class="c" tabindex="0" role="button" data-act="open" data-id="${esc(p.id)}"><div class="im">${p.im&&p.im[0]?`<img src="${p.im[0]}" alt="">`:'Нет фото'}</div>${p.sold?'<span class="sold">Продано</span>':''}<div class="t"><b>${esc(p.n)}</b><span class="pr">${money(p.pr)}</span></div></div>`).join('');
+ return `<p style="color:var(--mut)">${esc(S.s.about)}</p>${list?`<div class="grid">${list}</div>`:'<p>Товаров пока нет.</p>'}`}
+function modalV(){
+ const m=ui.modal;if(!m)return'';let h='';
+ if(m.t==='prod'){const p=prod(m.id);if(!p){ui.modal=null;return''}
+  h=`<div class="big">${p.im[m.k]?`<img src="${p.im[m.k]}" alt="">`:'Нет фото'}</div><div class="th">${p.im.map((s,i)=>`<img src="${s}" data-act="photo" data-k="${i}" alt="">`).join('')}</div>
+  <h2 style="margin:6px 0;overflow-wrap:anywhere">${esc(p.n)}</h2><div class="pr" style="font-size:18px">${money(p.pr)}</div><p style="overflow-wrap:anywhere">${esc(p.d).replace(/\n/g,'<br>')}</p>
+  ${p.sz.length?`<label>Размер</label><div class="sz">${p.sz.map(s=>`<button class="${m.size===s?'on':''}" data-act="size" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:''}
+  <div class="em" id="merr"></div>
+  ${p.sold?'<button disabled style="width:100%">Продано</button>':`<button class="p" style="width:100%" data-act="add">Купить</button>`}`}
+ if(m.t==='cart'){h=`<h2 style="margin-top:0">Корзина</h2>`+(cart.length?cart.map((i,n)=>`<div class="box row"><div style="flex:3"><b>${esc(i.n)}</b><br><small>${i.size?'Размер '+esc(i.size)+' · ':''}${money(i.pr)}</small></div><div class="row" style="flex:2;flex-wrap:nowrap"><button data-act="qty" data-n="${n}" data-d="-1" aria-label="Меньше">−</button><span style="text-align:center">${i.q}</span><button data-act="qty" data-n="${n}" data-d="1" aria-label="Больше">+</button></div></div>`).join('')+`<h3>Итого: ${money(total())}</h3><button class="p" style="width:100%" data-act="checkout">Оформить заказ</button>`:'<p>Корзина пуста</p>')}
+ if(m.t==='co'){h=`<h2 style="margin-top:0">Оформление</h2><div class="box"><div>1. Переведите <b>${money(total())}</b> на карту:</div><div class="card" id="cardno">${esc(S.s.card)||'(номер карты не указан)'}</div><small>${esc(S.s.holder)}</small><br><button data-act="copycard">Скопировать номер</button></div>
+  <div>2. Данные для отправки:</div>
+  <label for="f1">Имя и фамилия</label><input id="f1" autocomplete="name"><label for="f2">Телефон</label><input id="f2" type="tel" autocomplete="tel"><label for="f3">Доставка</label><select id="f3"><option>Новая почта</option><option>Укрпочта</option></select>
+  <label for="f4">Город</label><input id="f4"><label for="f5">Отделение / индекс / адрес</label><input id="f5"><label for="f6">Ваш Telegram (тег)</label><input id="f6" placeholder="@username"><label for="f7">Комментарий</label><textarea id="f7" rows="2"></textarea>
+  <div class="em" id="merr"></div>
+  <button class="p" style="width:100%" data-act="prepare">3. Подготовить заказ для продавца</button>`}
+ if(m.t==='done'){const tg=(S.s.tg||'').replace(/^@/,'').trim();
+  h=`<h2 style="margin-top:0">Заказ готов ✅</h2>${tg?`<p>Нажмите кнопку ниже: откроется Telegram с готовым сообщением. Останется нажать «Отправить» в чате с продавцом.</p><a class="btn p" style="width:100%" href="https://t.me/${encodeURIComponent(tg)}?text=${encodeURIComponent(m.txt)}" target="_blank" rel="noopener">Открыть Telegram</a>`:`<p>Продавец ещё не указал Telegram. Скопируйте заказ и отправьте его любым способом.</p>`}<p><small>Если чат не открылся, скопируйте заказ и отправьте вручную:</small></p><textarea rows="8" readonly id="otxt">${esc(m.txt)}</textarea><button data-act="copyorder" style="width:100%">Скопировать заказ</button>`}
+ if(m.t==='login'){h=`<h2 style="margin-top:0">Вход для владельца</h2><label for="lpw">Пароль</label><input id="lpw" type="password" autocomplete="current-password"><div class="em" id="lerr"></div><button class="p" style="width:100%" data-act="dologin">Войти</button>`}
+ return `<div class="ov" data-act="ovl"><div class="md" role="dialog" aria-modal="true">${h}<br><button style="width:100%;margin-top:8px" data-act="close">Закрыть</button></div></div>`}
+function renderModal(){$('#modal').innerHTML=modalV();const f=$('#lpw');if(f&&ui.modal&&ui.modal.t==='login')f.focus()}
+function addCart(){const p=prod(ui.modal.id);if(!p)return;if(p.sz.length&&!ui.modal.size){$('#merr').textContent='Выберите размер';return}
+ const f=cart.find(i=>i.id===p.id&&i.size===ui.modal.size);f?f.q++:cart.push({id:p.id,n:p.n,pr:p.pr,size:ui.modal.size||null,q:1});saveCart();ui.modal={t:'cart'};render()}
+function prepare(){const v=i=>$('#f'+i).value.trim();
+ if(!v(1)||!v(2)||!v(4)||!v(5)||!v(6)){$('#merr').textContent='Заполните имя, телефон, город, отделение и Telegram';return}
+ const txt=`🛍 Новый заказ\n`+cart.map((i,n)=>`${n+1}) ${i.n}${i.size?', размер '+i.size:''} × ${i.q} — ${i.pr*i.q} ${S.s.cur}`).join('\n')+`\nИтого: ${total()} ${S.s.cur}\n\nИмя: ${v(1)}\nТелефон: ${v(2)}\nДоставка: ${$('#f3').value}, ${v(4)}, ${v(5)}\nTelegram: ${v(6)}${v(7)?'\nКомментарий: '+v(7):''}\nОплата: перевод на карту`;
+ cart=[];saveCart();ui.modal={t:'done',txt};render()}
+
+/* ---------- вход ---------- */
+function doLogin(){const v=$('#lpw').value;
+ if(sha256(SALT+v)===S.s.pw){isAdmin=true;L.set('shopAdmin',S.s.pw);ui.mode='admin';ui.modal=null;persistUI();checkWrite();render()}
+ else{$('#lerr').textContent='Неверный пароль';$('#lpw').select()}}
+function logout(){isAdmin=false;L.del('shopAdmin');ui.mode='shop';persistUI();render()}
+
+/* ---------- админка ---------- */
+function barHTML(){
+ const sz=(JSON.stringify(S).length/1048576).toFixed(1);
+ const n={saved:['ok','✓ Все изменения сохранены по этой ссылке',''],dirty:['dirty','Есть несохранённые изменения','<button class="p" data-act="savenow">Сохранить сейчас</button>'],saving:['','Сохраняю…',''],err:['err',esc(ui.msg),'<button data-act="savenow">Повторить</button>']}[ui.save];
+ return `<div class="bar ${n[0]}"><div class="row"><span class="st">${n[1]}</span>${n[2]}</div><small>Размер страницы ${sz} МБ из 16</small></div>`}
+function bar(){const b=$('#bar');if(b)b.innerHTML=barHTML()}
+function adminV(){
+ let h=`<div id="bar">${barHTML()}</div>${ui.canWrite===false?`<div class="note"><b>Сохранять отсюда нельзя.</b> На этой ссылке правки сохраняет только владелец. Откройте ссылку, войдя в свой аккаунт Claude, и введите пароль ещё раз.</div>`:''}<div class="tabs"><button class="${ui.tab==='p'?'on':''}" data-act="tab" data-v="p">Товары</button><button class="${ui.tab==='s'?'on':''}" data-act="tab" data-v="s">Настройки</button></div>`;
+ if(ui.tab==='s'){const f=(k,l,ph='')=>`<label for="s_${k}">${l}</label><input id="s_${k}" data-s="${k}" value="${esc(S.s[k])}" placeholder="${esc(ph)}">`;
+  h+=f('name','Название магазина')+`<label for="s_color">Цвет сайта</label><input id="s_color" type="color" data-s="color" value="${esc(S.s.color)}" style="height:44px">`+f('about','Описание под названием')+f('tg','Ваш Telegram (без @), куда приходят заказы','username')+f('card','Номер карты для оплаты')+f('holder','Получатель (имя на карте)')+f('cur','Валюта')
+  +`<h2 class="s">Пароль администратора</h2><small>Пароль нужен для входа в админку с кнопки «Вход для владельца» внизу сайта. После смены пароля на других устройствах нужно войти заново.</small>
+  <label for="pw0">Текущий пароль</label><input id="pw0" type="password" autocomplete="current-password"><label for="pw1">Новый пароль (не короче 6 символов)</label><input id="pw1" type="password" autocomplete="new-password"><label for="pw2">Повторите новый пароль</label><input id="pw2" type="password" autocomplete="new-password">
+  <div class="em" id="pwmsg"></div><button class="p" data-act="chpw">Сменить пароль</button>`}
+ else{h+=`<button class="p" data-act="newp">+ Добавить товар</button>`+S.p.map(p=>{const id=esc(p.id);return `<div class="box"><div class="row"><div><label for="n_${id}">Название</label><input id="n_${id}" data-p="${id}" data-f="n" value="${esc(p.n)}"></div><div><label for="r_${id}">Цена</label><input id="r_${id}" type="number" min="0" step="any" data-p="${id}" data-f="pr" value="${+p.pr||0}"></div></div>
+  <label for="d_${id}">Описание</label><textarea id="d_${id}" rows="2" data-p="${id}" data-f="d">${esc(p.d)}</textarea>
+  <label for="z_${id}">Размеры через запятую (S, M, L)</label><input id="z_${id}" data-p="${id}" data-f="sz" value="${esc(p.sz.join(', '))}">
+  <div>${p.im.map((s,i)=>`<span class="x"><img src="${s}" style="width:64px;height:64px;object-fit:cover;border-radius:8px" alt=""><button data-act="rmimg" data-id="${id}" data-i="${i}" aria-label="Удалить фото">×</button></span> `).join('')}</div>
+  <label for="i_${id}">Добавить фото</label><input id="i_${id}" type="file" accept="image/*" multiple data-img="${id}">
+  <div class="row"><button data-act="sold" data-id="${id}">${p.sold?'Вернуть в продажу':'Отметить «Продано»'}</button>${ui.confirm===p.id?`<button class="d" data-act="del" data-id="${id}">Точно удалить?</button>`:`<button class="d" data-act="askdel" data-id="${id}">Удалить</button>`}</div></div>`}).join('')}
+ return h}
+function newP(){S.p.unshift({id:'p'+Date.now(),n:'Новый товар',pr:0,d:'',sz:['S','M','L'],im:[],sold:false});mark();render()}
+function shrink(file){return new Promise((res,rej)=>{const i=new Image,u=URL.createObjectURL(file);i.onload=()=>{const k=Math.min(1,800/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.72))};i.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('img'))};i.src=u})}
+async function addImg(id,files){const p=prod(id);if(!p)return;
+ for(const f of files){
+  if(JSON.stringify(S).length>15.2*1048576){toast('Достигнут лимит размера страницы. Удалите часть фото.');break}
+  try{p.im.push(await shrink(f))}catch(e){toast('Не удалось прочитать файл '+f.name)}}
+ mark();render()}
+function changePw(){
+ const a=$('#pw0').value,b=$('#pw1').value,c=$('#pw2').value,m=$('#pwmsg');
+ if(sha256(SALT+a)!==S.s.pw){m.textContent='Текущий пароль неверный';return}
+ if(b.length<6){m.textContent='Новый пароль короче 6 символов';return}
+ if(b!==c){m.textContent='Пароли не совпадают';return}
+ S.s.pw=sha256(SALT+b);L.set('shopAdmin',S.s.pw);
+ ['#pw0','#pw1','#pw2'].forEach(s=>{$(s).value=''});m.textContent='';toast('Пароль изменён');mark();save()}
+
+/* ---------- сохранение: вся страница публикуется как новая версия по этой же ссылке ---------- */
+let A=null,dirty=false,timer=null,saving=false;
+if(window.claude&&window.claude.use)window.claude.use('artifact').then(n=>{A=n}).catch(()=>{});
+function checkWrite(){if(!(window.claude&&window.claude.use))return;window.claude.use('user').then(u=>{if(u&&typeof u.canEdit==='function'){ui.canWrite=!!u.canEdit();if(isAdmin&&ui.mode==='admin'&&!ui.modal)render()}}).catch(()=>{})}
+function buildDoc(){
+ const css=$('#css').textContent,js=$('#main').textContent,st=JSON.stringify(S).replace(/</g,'\\u003c');
+ return PREFIX+'<title>'+esc(S.s.name)+'</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n<style id="css">'+css+'</style>\n<div id="view"></div>\n<div id="modal"></div>\n<div id="toast" hidden></div>\n<script id="state" type="application/json">'+st+'<\/script>\n<script id="main">'+js+'<\/script></body></html>'}
+function mark(){dirty=true;ui.save='dirty';theme();const h=$('header h1');if(h)h.textContent=S.s.name;bar();clearTimeout(timer);timer=setTimeout(trySave,2000)}
+function trySave(){if(!dirty)return;const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!ui.modal){timer=setTimeout(trySave,1200);return}save()}
+async function save(){
+ clearTimeout(timer);if(saving)return;
+ const a=document.activeElement;if(a&&a.blur)a.blur();
+ if(!A&&window.claude&&window.claude.use){try{A=await window.claude.use('artifact')}catch(e){}}
+ if(!A){ui.save='err';ui.msg='Сохранение недоступно в этом окне. Откройте ссылку на сайт в браузере или приложении Claude.';bar();return}
+ saving=true;ui.save='saving';bar();
+ try{await A.publish(buildDoc());dirty=false;ui.save='saved';bar()}
+ catch(e){const c=e&&e.code;
+  if(c==='conflict'){ui.save='err';ui.msg='Страницу обновили в другом окне. Загружается новая версия, повторите правку.'}
+  else if(['not_writer','not_granted','consent_required','capability_disabled','not_declared','capability_removed'].includes(c)){ui.canWrite=false;ui.save='err';ui.msg='Сохранять может только владелец ссылки. Откройте её в своём аккаунте Claude.';render()}
+  else if(c==='too_large'){ui.save='err';ui.msg='Страница стала слишком большой. Удалите часть фото.'}
+  else if(c==='rate_limited'){ui.save='err';ui.msg='Слишком частые сохранения. Подождите минуту и нажмите «Повторить».'}
+  else{ui.save='err';ui.msg='Не удалось сохранить. Нажмите «Повторить».'}
+  bar()}
+ finally{saving=false}}
+
+/* ---------- события ---------- */
+function render(){theme();$('#view').innerHTML=header()+'<main>'+(ui.mode==='admin'&&isAdmin?adminV():shopV())+'</main>'+footer();renderModal()}
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-act]');if(!el)return;const act=el.dataset.act,d=el.dataset;
+ if(act==='ovl'){if(e.target===el){ui.modal=null;renderModal()}return}
+ switch(act){
+  case 'open':ui.modal={t:'prod',id:d.id,size:null,k:0};renderModal();break;
+  case 'photo':ui.modal.k=+d.k;renderModal();break;
+  case 'size':ui.modal.size=d.v;renderModal();break;
+  case 'add':addCart();break;
+  case 'cart':ui.modal={t:'cart'};renderModal();break;
+  case 'qty':{const i=cart[+d.n];if(i){i.q+=+d.d;if(i.q<1)cart.splice(+d.n,1);saveCart();render()}break}
+  case 'checkout':ui.modal={t:'co'};renderModal();break;
+  case 'copycard':copy((S.s.card||'').replace(/\s/g,''),$('#cardno'));break;
+  case 'prepare':prepare();break;
+  case 'copyorder':copy(ui.modal.txt,$('#otxt'));break;
+  case 'close':ui.modal=null;renderModal();break;
+  case 'login':ui.modal={t:'login'};renderModal();break;
+  case 'dologin':doLogin();break;
+  case 'logout':logout();break;
+  case 'mode':ui.mode=ui.mode==='admin'?'shop':'admin';persistUI();render();break;
+  case 'tab':ui.tab=d.v;persistUI();render();break;
+  case 'savenow':save();break;
+  case 'newp':newP();break;
+  case 'rmimg':{const p=prod(d.id);if(p){p.im.splice(+d.i,1);mark();render()}break}
+  case 'sold':{const p=prod(d.id);if(p){p.sold=!p.sold;mark();render()}break}
+  case 'askdel':ui.confirm=d.id;render();break;
+  case 'del':S.p=S.p.filter(x=>x.id!==d.id);ui.confirm=null;mark();render();break;
+  case 'chpw':changePw();break;
+ }});
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset.s){S.s[t.dataset.s]=t.value;mark();return}
+ if(t.dataset.p){const p=prod(t.dataset.p);if(!p)return;const f=t.dataset.f;
+  if(f==='pr')p.pr=Math.max(0,+t.value||0);else if(f==='sz')p.sz=t.value.split(',').map(s=>s.trim()).filter(Boolean);else p[f]=t.value;mark();return}
+ if(t.dataset.img){addImg(t.dataset.img,[...t.files]);t.value=''}});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.s==='color'){S.s.color=t.value;theme()}});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&ui.modal){ui.modal=null;renderModal();return}
+ if(e.key==='Enter'&&e.target.id==='lpw'){e.preventDefault();doLogin();return}
+ if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('c')){e.preventDefault();e.target.click()}});
+render();if(isAdmin)checkWrite();
+</script>
+
+</body></html>
